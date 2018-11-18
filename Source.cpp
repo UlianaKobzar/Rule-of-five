@@ -1,103 +1,65 @@
+#define NDEBUG
 #include <iostream>
 #include <algorithm>
 #include <utility>
+#include <cassert>
+#include "ArrIntWrapper.h"
 
-class Arr_int_wrapper
-{
-public:
-	size_t n = 0;
-	int* data;
-
-	Arr_int_wrapper(){}
-
-	Arr_int_wrapper(size_t n_) : n(n_), data(new int[n]){
-		int i = 0;
-		std::for_each(data, data + n, [&i](int x) {x = i; i++; });
-	}
-
-	Arr_int_wrapper(Arr_int_wrapper const& new_array) : n(new_array.n), data(new int[new_array.n]) {
-		std::copy_n(data, n, new_array.data);
-		std::cout << "Copy constructor finished work" << std::endl;
-	}
-
-	Arr_int_wrapper(Arr_int_wrapper && new_array) : n(new_array.n), data(new_array.data) {
-		new_array.data = nullptr;
-		new_array.n = 0;
-		std::cout << "Move constructor finished work" << std::endl;
-	}
-
-	Arr_int_wrapper& operator = (Arr_int_wrapper const& right) {
-		if (&right == this) {
-			return *this;
-		}
-
-		n = right.n;
-		data = new int[n];
-		std::copy_n(data, n, right.data);
-
-		std::cout << "Copy assigment operator finished work" << std::endl;
-		return *this;
-	}
-
-	Arr_int_wrapper& operator = (Arr_int_wrapper && right) {
-		if (&right == this) {
-			return *this;
-		}
-
-		n = right.n;
-		data = right.data;
-
-		right.data = nullptr;
-		right.n = 0;
-
-		std::cout << "Move assigment operator finished work" << std::endl;
-		return *this;
-	}
-
-
-
-	~Arr_int_wrapper() {
-//optional		std::cout << __func__ << std::endl;
-	}
-};
-
-void g(Arr_int_wrapper &arr) {
+void g(ArrIntWrapper& arr) {
 	std::cout << "Get reference" << std::endl;
 }
 
-void g(Arr_int_wrapper &&arr) {
+void g(ArrIntWrapper&& arr) {
 	std::cout << "Get r_value reference" << std::endl;
 }
 
-Arr_int_wrapper f(size_t n) {
-	Arr_int_wrapper arr(n);
+ArrIntWrapper f(size_t n) {
+	ArrIntWrapper arr(n);
 	return arr;
 }
 
 
 int main() {
-	Arr_int_wrapper arr1(5);
+	ArrIntWrapper arr1(5);
+	std::cout << "arr1: " << arr1 << std::endl;
 
 	//copy constructor
-	Arr_int_wrapper arr2(arr1);
+	ArrIntWrapper arr2(arr1);
+	std::cout << "arr2: " << arr2 << std::endl;
 	//copy assigment
-	Arr_int_wrapper arr3(3);
+	ArrIntWrapper arr3(3);
+	std::cout << "arr3: " << arr3 << std::endl;
 	arr3 = arr1;
+	std::cout << "arr3: " << arr3 << std::endl;
 
 	//get reference
 	g(arr3);
 	//get r_value reference
 	g(f(4));
 
+	std::cout<< std::endl;
+
 	//Move assigment operator
 	arr3 = f(7);
+	std::cout << "arr3: " << arr3;
+
+	std::cout << std::endl;
+
+	ArrIntWrapper arr5 = f(7);
+	std::cout << "arr5: " << arr5 << std::endl;
+	ArrIntWrapper arr6(f(10));
+	std::cout << "arr6: " << arr6 << std::endl;
+	ArrIntWrapper arr7 = ArrIntWrapper(4);
+	std::cout << "arr7: " << arr7 << std::endl;
+
+	std::cout << std::endl;
 
 	//move constructor
-	std::cout << "arr1.data = " << arr1.data << std::endl;
+	std::cout << "arr1.data = " << arr1 << std::endl;
 
-	Arr_int_wrapper arr4 = std::move(arr1);
+	ArrIntWrapper arr4 = std::move(arr1);
 
-	std::cout << "arr4.data = " << arr4.data << " " << "arr1.data = " << arr1.data << std::endl;
+	std::cout << "arr4.data = " << arr4 << " " << "arr1.data = " << arr1 << std::endl;
 
 	return 0;
 }
